@@ -3,7 +3,12 @@ global.Buffer = global.Buffer || require("buffer").Buffer;
 
 import { registerRootComponent } from "expo";
 import { RecoilRoot, useRecoilState } from "recoil";
-import { TouchableOpacity, ActivityIndicator, View } from "react-native";
+import {
+  Platform,
+  TouchableOpacity,
+  ActivityIndicator,
+  View,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createBottomTabNavigator,
@@ -55,18 +60,18 @@ const xnftjson = require("../xnft.json");
 console.log(`Version: ${xnftjson.version}`);
 
 const modalConfig = {
-  Transfer: TransferModal,
-  Delete: DeleteModal,
-  CreateSubdomain: CreateSubdomainModal,
-  SuccessSubdomainModal: SuccessSubdomainModal,
-  WormholeExplainer: WormholeExplainerModal,
-  EditPicture: EditPicture,
-  ProgressExplainerModal: ProgressExplainerModal,
-  SearchModal: SearchModal,
-  DiscountExplainerModal: DiscountExplainerModal,
-  DomainSizeModal: DomainSizeModal,
-  LanguageModal: LanguageModal,
-  TokenizeModal: TokenizeModal,
+  // Transfer: TransferModal,
+  // Delete: DeleteModal,
+  // CreateSubdomain: CreateSubdomainModal,
+  // SuccessSubdomainModal: SuccessSubdomainModal,
+  // WormholeExplainer: WormholeExplainerModal,
+  // EditPicture: EditPicture,
+  // ProgressExplainerModal: ProgressExplainerModal,
+  // SearchModal: SearchModal,
+  // DiscountExplainerModal: DiscountExplainerModal,
+  // DomainSizeModal: DomainSizeModal,
+  // LanguageModal: LanguageModal,
+  // TokenizeModal: TokenizeModal,
 };
 
 const stackModal = createModalStack(modalConfig);
@@ -82,18 +87,19 @@ const TabBarLabel = ({ focused }: { focused: boolean }, label: ReactNode) => {
 };
 
 function TabNavigator() {
-  useReferrer();
-  const [cart] = useRecoilState(cartState);
-  const { publicKey, setVisible, connected } = useWallet();
-  const { currentLanguage } = useLanguageContext();
+  console.log(1);
+  // useReferrer();
+  // const [cart] = useRecoilState(cartState);
+  // const { publicKey, setVisible, connected } = useWallet();
+  // const { currentLanguage } = useLanguageContext();
 
-  useEffect(() => {
-    console.table(isMobile, isXnft, isWeb);
-    if (isXnft) return;
-    if (!connected) {
-      setVisible(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   console.table(isMobile, isXnft, isWeb);
+  //   if (isXnft) return;
+  //   if (!connected) {
+  //     setVisible(true);
+  //   }
+  // }, []);
 
   return (
     <Tab.Navigator
@@ -107,19 +113,24 @@ function TabNavigator() {
           aspectRatio: "1/1",
         },
       }}
-      key={currentLanguage} // trigger tab re-render when translation is toggled
+      // key={currentLanguage} // trigger tab re-render when translation is toggled
     >
       <Tab.Screen
         name="Profile"
-        initialParams={{ owner: publicKey?.toBase58() }}
-        children={({ route }) => <ProfileScreen owner={route.params.owner} />}
+        // initialParams={{ owner: publicKey?.toBase58() }}
+        // children={({ route }) => <ProfileScreen owner={route.params.owner} />}
+        children={({ route }) => (
+          <View>
+            <Text>Profile</Text>
+          </View>
+        )}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            e.preventDefault();
-            if (!connected) {
-              return setVisible(true);
-            }
-            navigation.navigate("Profile", { owner: publicKey?.toBase58() });
+            // e.preventDefault();
+            // if (!connected) {
+            //   return setVisible(true);
+            // }
+            // navigation.navigate("Profile", { owner: publicKey?.toBase58() });
           },
         })}
         options={{
@@ -127,12 +138,17 @@ function TabNavigator() {
           tabBarIcon: ({ color, size }) => (
             <Feather name="user" size={size} color={color} />
           ),
-          header: () => <LanguageHeader />,
+          // header: () => <LanguageHeader />,
         }}
       />
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        // component={HomeScreen}
+        component={() => (
+          <View>
+            <Text>HomeScreen</Text>
+          </View>
+        )}
         options={{
           tabBarLabel: (props) => TabBarLabel(props, "Domains"),
           tabBarIcon: ({ color, size }) => (
@@ -142,19 +158,24 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Cart"
-        component={Cart}
+        // component={Cart}
+        component={() => (
+          <View>
+            <Text>Cart</Text>
+          </View>
+        )}
         options={{
           tabBarLabel: (props) => TabBarLabel(props, "Cart"),
           tabBarIcon: ({ color, size }) => (
             <View style={tw`relative`}>
               <Feather name="shopping-cart" size={size} color={color} />
-              {cart.length !== 0 ? (
+              {/* {cart.length !== 0 ? (
                 <Text
                   style={tw`absolute -top-1 text-white -right-2 bg-brand-primary rounded-full font-bold h-[15px] text-center text-xs w-[16px]`}
                 >
                   {cart.length}
                 </Text>
-              ) : null}
+              ) : null} */}
             </View>
           ),
           header: () => (
@@ -205,24 +226,17 @@ const Wrap = ({ children }: { children: ReactNode }) => {
   if (isXnft) {
     return <>{children}</>;
   }
-  if (isWeb) {
-    return (
-      <ConnectionProvider endpoint={URL}>
-        <WalletProvider autoConnect wallets={wallets}>
-          <WalletModalProvider>{children}</WalletModalProvider>
-        </WalletProvider>
-      </ConnectionProvider>
-    );
-  }
-  if (isMobile) {
-    return (
-      <ConnectionProvider endpoint={URL}>
-        <WalletProvider autoConnect wallets={wallets}>
-          <WalletModalProvider>{children}</WalletModalProvider>
-        </WalletProvider>
-      </ConnectionProvider>
-    );
-  }
+  // if (isWeb || isMobile) {
+  //   return (
+  //     <ConnectionProvider endpoint={URL}>
+  //       <WalletProvider autoConnect wallets={wallets}>
+  //         <WalletModalProvider>
+  //           {children}
+  //         </WalletModalProvider>
+  //       </WalletProvider>
+  //     </ConnectionProvider>
+  //   );
+  // }
   return <>{children}</>;
 };
 

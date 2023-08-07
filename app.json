@@ -1,7 +1,6 @@
 {
   "expo": {
     "name": "SNS Manager",
-    "slug": "sns-manager",
-    "entryPoint": "./src/App"
+    "slug": "sns-manager"
   }
 }
